@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel Financiero — TecnoVenta 2022</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📒</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+:root{
+  --ink:#0E141C;
+  --panel:#161E29;
+  --panel-2:#1C2531;
+  --line:#2A3441;
+  --paper:#F3EFE6;
+  --paper-dim:#B7BFCB;
+  --gold:#E7A947;
+  --gold-dim:#8A6A34;
+  --teal:#4FD1AE;
+  --teal-dim:#2E6E5C;
+  --coral:#E8664F;
+  --coral-dim:#7A3A30;
+  --blue:#6FA8DC;
+  --font-display:'Fraunces', serif;
+  --font-body:'IBM Plex Sans', sans-serif;
+  box-sizing:border-box;
+  padding-top: env(safe-area-inset-top,0px);
+  padding-bottom: env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--paper);
+  font-family:var(--font-body);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--gold);color:var(--ink);}
+
+a{color:var(--gold);}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+
+/* ---------- Header / hero ---------- */
+header.hero{
+  border-bottom:1px solid var(--line);
+  padding:64px 0 48px;
+  position:relative;
+  overflow:hidden;
+}
+header.hero::before{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    repeating-linear-gradient(90deg, rgba(231,169,71,0.045) 0 1px, transparent 1px 120px),
+    repeating-linear-gradient(0deg, rgba(231,169,71,0.045) 0 1px, transparent 1px 120px);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  font-size:14px;
+  color:var(--gold);
+  letter-spacing:0.02em;
+  margin:0 0 14px;
+  font-weight:500;
+}
+.hero h1{
+  font-family:var(--font-display);
+  font-optical-sizing:auto;
+  font-weight:600;
+  font-size:clamp(2.2rem, 5vw, 3.6rem);
+  line-height:1.05;
+  margin:0 0 18px;
+  max-width:14ch;
+  color:#fff;
+}
+.hero p.lede{
+  max-width:62ch;
+  font-size:1.08rem;
+  color:var(--paper-dim);
+  margin:0 0 36px;
+}
+.hero-kpis{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:0;
+  border:1px solid var(--line);
+  border-radius:2px;
+}
+.hero-kpi{
+  padding:20px 22px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.hero-kpi:last-child{border-right:none;}
+.hero-kpi .num{
+  font-family:var(--font-display);
+  font-size:1.9rem;
+  font-weight:600;
+  color:var(--gold);
+  display:block;
+  letter-spacing:-0.01em;
+}
+.hero-kpi .num.teal{color:var(--teal);}
+.hero-kpi .lab{
+  font-size:0.82rem;
+  color:var(--paper-dim);
+  margin-top:4px;
+  display:block;
+}
+
+/* ---------- Sections ---------- */
+section{
+  padding:56px 0;
+  border-bottom:1px solid var(--line);
+}
+.sec-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:24px;
+  margin-bottom:8px;
+  flex-wrap:wrap;
+}
+.sec-num{
+  font-family:var(--font-display);
+  color:var(--gold-dim);
+  font-size:0.95rem;
+  font-weight:500;
+}
+.sec-head h2{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:1.85rem;
+  margin:2px 0 0;
+  color:#fff;
+}
+.sec-why{
+  max-width:640px;
+  color:var(--paper-dim);
+  font-size:0.98rem;
+  border-left:2px solid var(--gold-dim);
+  padding-left:16px;
+}
+.sec-body{
+  margin-top:32px;
+  display:grid;
+  gap:24px;
+}
+.grid-2{grid-template-columns:1.3fr 1fr;}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+@media (max-width:860px){
+  .grid-2, .grid-3{grid-template-columns:1fr;}
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:22px 24px;
+}
+.panel h3{
+  font-size:0.95rem;
+  font-weight:600;
+  margin:0 0 4px;
+  color:var(--paper);
+}
+.panel .sub{
+  font-size:0.82rem;
+  color:var(--paper-dim);
+  margin:0 0 16px;
+}
+.chart-box{position:relative;height:300px;}
+.chart-box.tall{height:360px;}
+.chart-box.short{height:230px;}
+
+table.data-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:0.9rem;
+}
+table.data-table th{
+  text-align:left;
+  font-weight:600;
+  color:var(--paper-dim);
+  font-size:0.78rem;
+  padding:8px 10px;
+  border-bottom:1px solid var(--line);
+}
+table.data-table td{
+  padding:9px 10px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+table.data-table tr:last-child td{border-bottom:none;}
+table.data-table td.num, table.data-table th.num{text-align:right; font-variant-numeric:tabular-nums;}
+.bar-cell{position:relative;}
+.bar-track{background:rgba(255,255,255,0.06); border-radius:2px; height:6px; margin-top:5px; overflow:hidden;}
+.bar-fill{height:100%; background:var(--gold);}
+.bar-fill.teal{background:var(--teal);}
+.bar-fill.coral{background:var(--coral);}
+
+.callout{
+  background:var(--panel-2);
+  border:1px solid var(--coral-dim);
+  border-left:3px solid var(--coral);
+  border-radius:3px;
+  padding:18px 20px;
+  font-size:0.94rem;
+  color:var(--paper);
+}
+.callout.good{border-left-color:var(--teal); border-color:var(--teal-dim);}
+.callout strong{color:#fff;}
+.callout .tag{
+  display:inline-block;
+  font-size:0.72rem;
+  font-weight:600;
+  color:var(--coral);
+  margin-bottom:8px;
+}
+.callout.good .tag{color:var(--teal);}
+
+.stat-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.92rem;}
+.stat-row:last-child{border-bottom:none;}
+.stat-row .v{font-weight:600; color:var(--gold); font-variant-numeric:tabular-nums;}
+.stat-row .v.teal{color:var(--teal);}
+.stat-row .v.coral{color:var(--coral);}
+
+.findings-list{list-style:none; margin:0; padding:0; display:grid; gap:14px;}
+.findings-list li{
+  padding:14px 16px;
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  border-radius:3px;
+  font-size:0.93rem;
+}
+.findings-list li b{color:var(--gold); display:block; margin-bottom:3px; font-size:0.9rem;}
+
+footer{
+  padding:36px 0 60px;
+  color:var(--paper-dim);
+  font-size:0.85rem;
+}
+footer a{color:var(--paper-dim); text-decoration:underline;}
+
+@media (max-width: 600px){
+  header.hero{padding:44px 0 32px;}
+  section{padding:40px 0;}
+  .panel{padding:18px;}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="hero-eyebrow">Panel financiero anual · Enero – Diciembre 2022</p>
+    <h1>Un año de ventas, leído en números que importan.</h1>
+    <p class="lede">Este panel convierte 1.901 movimientos de venta de la compañía en indicadores de rentabilidad, tendencia y riesgo comercial, listos para decidir sobre ellos — no solo para mirarlos.</p>
+    <div class="hero-kpis" id="hero-kpis"></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="tendencia">
+    <div class="sec-head">
+      <div><span class="sec-num">01</span><h2>Tendencia y pronóstico</h2></div>
+      <p class="sec-why">Por qué importa: una sola cifra de ventas anuales oculta si el negocio acelera, se estanca o cae. La tendencia mensual y su proyección permiten anticipar caja y metas, en vez de reaccionar al cierre de cada mes.</p>
+    </div>
+    <div class="sec-body grid-2">
+      <div class="panel">
+        <h3>Ventas, costo y margen mensual</h3>
+        <p class="sub">Con proyección lineal de los próximos 3 meses (línea punteada)</p>
+        <div class="chart-box tall"><canvas id="chartTendencia"></canvas></div>
+      </div>
+      <div class="panel">
+        <h3>Lectura del pronóstico</h3>
+        <p class="sub">Regresión lineal sobre ventas mensuales</p>
+        <div id="forecast-stats"></div>
+        <div class="chart-box short" style="margin-top:18px;"><canvas id="chartMargenPct"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mix">
+    <div class="sec-head">
+      <div><span class="sec-num">02</span><h2>Qué se vende y qué deja utilidad</h2></div>
+      <p class="sec-why">Por qué importa: vender mucho no es lo mismo que ganar mucho. Cruzar volumen de ventas con margen por marca, tipo y producto muestra dónde reforzar inventario y dónde revisar precios o proveedores.</p>
+    </div>
+    <div class="sec-body grid-2">
+      <div class="panel">
+        <h3>Ventas y margen por marca</h3>
+        <p class="sub">Barra: participación en ventas · color: % de margen bruto</p>
+        <div class="chart-box tall"><canvas id="chartMarca"></canvas></div>
+      </div>
+      <div class="panel">
+        <h3>Mezcla por categoría</h3>
+        <p class="sub">Participación en ventas por tipo de producto</p>
+        <div class="chart-box tall"><canvas id="chartTipo"></canvas></div>
+      </div>
+    </div>
+    <div class="sec-body grid-2" style="margin-top:0;">
+      <div class="panel">
+        <h3>Concentración de catálogo (Pareto)</h3>
+        <p class="sub" id="pareto-sub"></p>
+        <div class="chart-box tall"><canvas id="chartPareto"></canvas></div>
+      </div>
+      <div class="panel">
+        <h3>Márgenes extremos por producto</h3>
+        <p class="sub">Los 5 productos con menor y mayor % de margen</p>
+        <div id="margin-table"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="clientes">
+    <div class="sec-head">
+      <div><span class="sec-num">03</span><h2>Concentración de clientes</h2></div>
+      <p class="sec-why">Por qué importa — hallazgo no solicitado pero clave: la compañía factura a solo 4 clientes. Ciudad, forma de pago, transportadora y segmento (A/B/C) resultan ser, en los datos, el mismo cliente visto de cuatro formas: no son variables independientes, así que el verdadero riesgo a vigilar es uno solo, la dependencia de estas cuatro cuentas.</p>
+    </div>
+    <div class="sec-body grid-2">
+      <div class="panel">
+        <h3>Participación por cliente</h3>
+        <p class="sub">Cada cliente coincide 1 a 1 con su ciudad, forma de pago y transportadora</p>
+        <div class="chart-box tall"><canvas id="chartCliente"></canvas></div>
+      </div>
+      <div class="panel">
+        <h3>Riesgo de concentración</h3>
+        <p class="sub">Índice Herfindahl-Hirschman (HHI) sobre ventas</p>
+        <div id="hhi-stats"></div>
+      </div>
+    </div>
+    <div class="sec-body" style="margin-top:0;">
+      <div class="callout">
+        <span class="tag">Riesgo comercial</span>
+        <strong id="callout-top1"></strong> El cierre, atraso de pago o cambio de proveedor de cualquiera de estas cuatro cuentas impacta directamente el flujo de caja de todo el negocio. Se recomienda un plan activo de diversificación de cartera y límites de exposición por cliente.
+      </div>
+    </div>
+  </section>
+
+  <section id="comercial">
+    <div class="sec-head">
+      <div><span class="sec-num">04</span><h2>Desempeño comercial y forma de pago</h2></div>
+      <p class="sec-why">Por qué importa: el equipo y el área que gestionan cada venta, y si el cliente paga de contado o a crédito, determinan tanto la productividad interna como la exposición de la compañía a cuentas por cobrar.</p>
+    </div>
+    <div class="sec-body grid-2">
+      <div class="panel">
+        <h3>Ventas por área</h3>
+        <p class="sub">Compras y Ventas concentran más de un empleado cada una</p>
+        <div class="chart-box tall"><canvas id="chartArea"></canvas></div>
+      </div>
+      <div class="panel">
+        <h3>Forma de pago</h3>
+        <p class="sub">Participación en ventas — riesgo de cartera</p>
+        <div class="chart-box short"><canvas id="chartPago"></canvas></div>
+        <div id="pago-stats" style="margin-top:14px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ratios">
+    <div class="sec-head">
+      <div><span class="sec-num">05</span><h2>Ratios e indicadores financieros</h2></div>
+      <p class="sec-why">Por qué importa: estos son los indicadores que un analista financiero revisaría antes que cualquier gráfica — resumen en pocas cifras la salud del negocio y son comparables mes a mes o contra el sector.</p>
+    </div>
+    <div class="sec-body grid-3" id="ratios-grid"></div>
+  </section>
+
+  <section id="hallazgos">
+    <div class="sec-head">
+      <div><span class="sec-num">06</span><h2>Calidad de datos y hallazgos clave</h2></div>
+      <p class="sec-why">Por qué importa: ninguna cifra anterior es más confiable que los datos que la sostienen. Antes de usar este panel para decidir, vale la pena conocer sus límites y las inconsistencias que ya se corrigieron.</p>
+    </div>
+    <ul class="findings-list" id="findings-list"></ul>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    Panel generado a partir de <em>BaseDatos.xlsx</em> (1.901 registros, ene–dic 2022). Cifras en pesos colombianos (COP). Pronósticos basados en regresión lineal simple sobre 12 meses de historia; deben tratarse como referencia, no como cifra comprometida.
+  </div>
+</footer>
+
+<script>
+const D = {"kpis": {"total_ventas": 103805408563.0, "total_costo": 87545659760.0, "total_margen": 16259748803.0, "margen_pct": 15.7, "unidades": 24541, "n_ventas": 1901, "ticket_prom": 54605686.0, "n_clientes": 4, "n_empleados": 10, "n_productos": 21}, "mensual": {"meses": ["2022-01", "2022-02", "2022-03", "2022-04", "2022-05", "2022-06", "2022-07", "2022-08", "2022-09", "2022-10", "2022-11", "2022-12"], "ventas": [9738965526.0, 7667494170.0, 9139607974.0, 11045631654.0, 13800339040.0, 8076808966.0, 5985626746.0, 7802299454.0, 7381244630.0, 8688965074.0, 9978997204.0, 4499428125.0], "costo": [8190899360.0, 6457410320.0, 7826406080.0, 9231847120.0, 11547555920.0, 6871189600.0, 5042192400.0, 6642664480.0, 6182905920.0, 7302940160.0, 8454918720.0, 3794729680.0], "margen": [1548066166.0, 1210083850.0, 1313201894.0, 1813784534.0, 2252783120.0, 1205619366.0, 943434346.0, 1159634974.0, 1198338710.0, 1386024914.0, 1524078484.0, 704698445.0], "unidades": [2302, 1846, 2182, 2480, 3194, 2016, 1466, 1894, 1764, 2044, 2288, 1065], "margen_pct": [15.9, 15.8, 14.4, 16.4, 16.3, 14.9, 15.8, 14.9, 16.2, 16.0, 15.3, 15.7], "crecimiento": [null, -21.3, 19.2, 20.9, 24.9, -41.5, -25.9, 30.4, -5.4, 17.7, 14.8, -54.9]}, "forecast": {"meses_hist": ["2022-01", "2022-02", "2022-03", "2022-04", "2022-05", "2022-06", "2022-07", "2022-08", "2022-09", "2022-10", "2022-11", "2022-12"], "ventas_hist": [9738965526.0, 7667494170.0, 9139607974.0, 11045631654.0, 13800339040.0, 8076808966.0, 5985626746.0, 7802299454.0, 7381244630.0, 8688965074.0, 9978997204.0, 4499428125.0], "tendencia": [10158010723.0, 9883908903.0, 9609807083.0, 9335705263.0, 9061603443.0, 8787501624.0, 8513399804.0, 8239297984.0, 7965196164.0, 7691094344.0, 7416992524.0, 7142890704.0], "meses_futuros": ["2023-01", "2023-02", "2023-03"], "ventas_forecast": [6868788884.0, 6594687064.0, 6320585244.0], "pendiente_mensual": -274101820.0, "r2": 0.169}, "marca": [{"Marca": "Apple", "Ventas": 27792445162.0, "Margen": 3956089162.0, "Unidades": 6482, "N": 570, "MargenPct": 14.2, "Part": 26.8}, {"Marca": "Asus", "Ventas": 17323637504.0, "Margen": 2181045504.0, "Unidades": 2890, "N": 188, "MargenPct": 12.6, "Part": 16.7}, {"Marca": "Lenovo", "Ventas": 16655742633.0, "Margen": 4589842633.0, "Unidades": 3179, "N": 191, "MargenPct": 27.6, "Part": 16.0}, {"Marca": "Xiaomi", "Ventas": 13079287232.0, "Margen": 1372987232.0, "Unidades": 4290, "N": 288, "MargenPct": 10.5, "Part": 12.6}, {"Marca": "Intel", "Ventas": 9280914346.0, "Margen": 895984346.0, "Unidades": 2508, "N": 188, "MargenPct": 9.7, "Part": 8.9}, {"Marca": "Samsung", "Ventas": 8142409784.0, "Margen": 920576024.0, "Unidades": 1756, "N": 192, "MargenPct": 11.3, "Part": 7.8}, {"Marca": "Janus", "Ventas": 4392824184.0, "Margen": 982076184.0, "Unidades": 1566, "N": 94, "MargenPct": 22.4, "Part": 4.2}, {"Marca": "Acer", "Ventas": 4194947718.0, "Margen": 1021547718.0, "Unidades": 738, "N": 94, "MargenPct": 24.4, "Part": 4.0}, {"Marca": "Vivo", "Ventas": 2943200000.0, "Margen": 339600000.0, "Unidades": 1132, "N": 96, "MargenPct": 11.5, "Part": 2.8}], "tipo": [{"Tipo": "Portátil", "Ventas": 47049200427.0, "Margen": 8849084427.0, "Unidades": 8709, "Part": 45.3}, {"Tipo": "Celular", "Ventas": 34276331694.0, "Margen": 4667057934.0, "Unidades": 9976, "Part": 33.0}, {"Tipo": "Pc Mesa", "Ventas": 22479876442.0, "Margen": 2743606442.0, "Unidades": 5856, "Part": 21.7}], "producto": [{"Producto": "Lenovo 14IGL7", "Ventas": 9897540996.0, "Margen": 2071540996.0, "Unidades": 1204, "Part": 9.5, "Acum": 9.5}, {"Producto": "MacBook Pro", "Ventas": 9468071808.0, "Margen": 757031808.0, "Unidades": 1664, "Part": 9.1, "Acum": 18.7}, {"Producto": "ASUS AIO V", "Ventas": 8806137912.0, "Margen": 865545912.0, "Unidades": 1782, "Part": 8.5, "Acum": 27.1}, {"Producto": "Gaming F15", "Ventas": 8517499592.0, "Margen": 1315499592.0, "Unidades": 1108, "Part": 8.2, "Acum": 35.3}, {"Producto": "15 Pulgadas Ip1 Athlon", "Ventas": 6585570108.0, "Margen": 2482170108.0, "Unidades": 1954, "Part": 6.3, "Acum": 41.7}, {"Producto": "Xiaomi redmi 8", "Ventas": 6367914400.0, "Margen": 849914400.0, "Unidades": 1780, "Part": 6.1, "Acum": 47.8}, {"Producto": "MacBook Air", "Ventas": 6033325368.0, "Margen": 857349368.0, "Unidades": 1256, "Part": 5.8, "Acum": 53.6}, {"Producto": "Intel Corei7", "Ventas": 5161483346.0, "Margen": 281263346.0, "Unidades": 998, "Part": 5.0, "Acum": 58.6}, {"Producto": "Galaxy jpro", "Ventas": 4949845104.0, "Margen": 844771344.0, "Unidades": 996, "Part": 4.8, "Acum": 63.4}, {"Producto": "JANUS", "Ventas": 4392824184.0, "Margen": 982076184.0, "Unidades": 1566, "Part": 4.2, "Acum": 67.6}, {"Producto": "13ultra", "Ventas": 4269152832.0, "Margen": 235752832.0, "Unidades": 1204, "Part": 4.1, "Acum": 71.7}, {"Producto": "ASPIRE 3", "Ventas": 4194947718.0, "Margen": 1021547718.0, "Unidades": 738, "Part": 4.0, "Acum": 75.8}, {"Producto": "INTEL CORE i3", "Ventas": 4119431000.0, "Margen": 614721000.0, "Unidades": 1510, "Part": 4.0, "Acum": 79.7}, {"Producto": "iPhone 13 pro max", "Ventas": 3701630640.0, "Margen": 1017530640.0, "Unidades": 778, "Part": 3.6, "Acum": 83.3}, {"Producto": "iPhone 11", "Ventas": 3335553488.0, "Margen": 534913488.0, "Unidades": 1094, "Part": 3.2, "Acum": 86.5}, {"Producto": "Galaxy s23", "Ventas": 3192564680.0, "Margen": 75804680.0, "Unidades": 760, "Part": 3.1, "Acum": 89.6}, {"Producto": "iPhone 13 pro", "Ventas": 3074250550.0, "Margen": 481450550.0, "Unidades": 926, "Part": 3.0, "Acum": 92.5}, {"Producto": "Vivo x80", "Ventas": 2943200000.0, "Margen": 339600000.0, "Unidades": 1132, "Part": 2.8, "Acum": 95.4}, {"Producto": "Xiaomi 13T", "Ventas": 2442220000.0, "Margen": 287320000.0, "Unidades": 1306, "Part": 2.4, "Acum": 97.7}, {"Producto": "Apple MacBook", "Ventas": 2179613308.0, "Margen": 307813308.0, "Unidades": 764, "Part": 2.1, "Acum": 99.8}, {"Producto": "Celular Donalis", "Ventas": 172631529.0, "Margen": 36131529.0, "Unidades": 21, "Part": 0.2, "Acum": 100.0}], "n80": 14, "n_productos_total": 21, "ciudad": [{"Ciudad cliente": "Bogotá", "Ventas": 43739616368.0, "Margen": 6839779488.0, "N": 804, "Part": 42.1}, {"Ciudad cliente": "Medellín", "Ventas": 20886432096.0, "Margen": 3176917936.0, "N": 378, "Part": 20.1}, {"Ciudad cliente": "Bucaramanga", "Ventas": 19664001853.0, "Margen": 3140020893.0, "N": 353, "Part": 18.9}, {"Ciudad cliente": "Cali", "Ventas": 19515358246.0, "Margen": 3103030486.0, "N": 366, "Part": 18.8}], "cliente": [{"Cliente": "Asociados LTDA", "Ventas": 43739616368.0, "Margen": 6839779488.0, "N": 804, "Part": 42.1}, {"Cliente": "Smart S.A.S", "Ventas": 20886432096.0, "Margen": 3176917936.0, "N": 378, "Part": 20.1}, {"Cliente": "FullStark", "Ventas": 19664001853.0, "Margen": 3140020893.0, "N": 353, "Part": 18.9}, {"Cliente": "Distribuidora Oriente", "Ventas": 19515358246.0, "Margen": 3103030486.0, "N": 366, "Part": 18.8}], "hhi": 2893.0, "top1_share": 42.1, "empleado": [{"Empleado": "Diego", "Area": "Compras", "Ventas": 12468916035.0, "Margen": 1936963075.0, "N": 205, "Ticket": 60823981.0}, {"Empleado": "Matias", "Area": "Almacen", "Ventas": 11001412676.0, "Margen": 1630615156.0, "N": 202, "Ticket": 54462439.0}, {"Empleado": "Liliana", "Area": "Gerencia", "Ventas": 10813613563.0, "Margen": 1643451803.0, "N": 197, "Ticket": 54891439.0}, {"Empleado": "Alejandra", "Area": "Control de calidad", "Ventas": 10746481941.0, "Margen": 1698004461.0, "N": 182, "Ticket": 59046604.0}, {"Empleado": "Martha", "Area": "Administracion", "Ventas": 10489264790.0, "Margen": 1598975230.0, "N": 211, "Ticket": 49712155.0}, {"Empleado": "Juan", "Area": "Ventas", "Ventas": 10240320591.0, "Margen": 1671430991.0, "N": 184, "Ticket": 55653916.0}, {"Empleado": "Hernan", "Area": "Compras", "Ventas": 9927646495.0, "Margen": 1579910775.0, "N": 183, "Ticket": 54249434.0}, {"Empleado": "Daniela", "Area": "Despachos", "Ventas": 9457100593.0, "Margen": 1451827593.0, "N": 187, "Ticket": 50572730.0}, {"Empleado": "Lina", "Area": "Ventas", "Ventas": 9441530676.0, "Margen": 1567326476.0, "N": 182, "Ticket": 51876542.0}, {"Empleado": "Paola", "Area": "Logística", "Ventas": 9219121203.0, "Margen": 1481243243.0, "N": 168, "Ticket": 54875721.0}], "area": [{"Area": "Compras", "Ventas": 22396562530.0, "Margen": 3516873850.0, "N": 388}, {"Area": "Ventas", "Ventas": 19681851267.0, "Margen": 3238757467.0, "N": 366}, {"Area": "Almacen", "Ventas": 11001412676.0, "Margen": 1630615156.0, "N": 202}, {"Area": "Gerencia", "Ventas": 10813613563.0, "Margen": 1643451803.0, "N": 197}, {"Area": "Control de calidad", "Ventas": 10746481941.0, "Margen": 1698004461.0, "N": 182}, {"Area": "Administracion", "Ventas": 10489264790.0, "Margen": 1598975230.0, "N": 211}, {"Area": "Despachos", "Ventas": 9457100593.0, "Margen": 1451827593.0, "N": 187}, {"Area": "Logística", "Ventas": 9219121203.0, "Margen": 1481243243.0, "N": 168}], "segcli": [{"Tipo cliente": "A", "Ventas": 64668598160.0, "Margen": 10019047120.0, "N": 1183}, {"Tipo cliente": "B", "Ventas": 19664001853.0, "Margen": 3140020893.0, "N": 353}, {"Tipo cliente": "C", "Ventas": 19472808550.0, "Margen": 3100680790.0, "N": 365}], "pago": [{"Pago del cliente": "Contado", "Ventas": 19664001853.0, "N": 353, "Part": 18.9}, {"Pago del cliente": "Crédito", "Ventas": 84141406710.0, "N": 1548, "Part": 81.1}], "transp": [{"Transportadora": "Terrestre", "Ventas": 63254974614.0, "N": 1170, "Unidades": 14782}, {"Transportadora": "Fluvial", "Ventas": 20886432096.0, "N": 378, "Unidades": 5142}, {"Transportadora": "Aereo", "Ventas": 19664001853.0, "N": 353, "Unidades": 4617}], "low_margin": [{"Producto": "Galaxy s23", "MargenPct": 2.4}, {"Producto": "Intel Corei7", "MargenPct": 5.4}, {"Producto": "13ultra", "MargenPct": 5.5}, {"Producto": "MacBook Pro", "MargenPct": 8.0}, {"Producto": "ASUS AIO V", "MargenPct": 9.8}], "high_margin": [{"Producto": "15 Pulgadas Ip1 Athlon", "MargenPct": 37.7}, {"Producto": "iPhone 13 pro max", "MargenPct": 27.5}, {"Producto": "ASPIRE 3", "MargenPct": 24.4}, {"Producto": "JANUS", "MargenPct": 22.4}, {"Producto": "Celular Donalis", "MargenPct": 20.9}], "diario": {"fechas": ["2022-01-01", "2022-01-02", "2022-01-03", "2022-01-04", "2022-01-05", "2022-01-06", "2022-01-07", "2022-01-08", "2022-01-10", "2022-01-11", "2022-01-12", "2022-01-13", "2022-01-14", "2022-01-15", "2022-01-16", "2022-01-17", "2022-01-19", "2022-01-21", "2022-01-22", "2022-01-23", "2022-01-25", "2022-01-26", "2022-01-27", "2022-01-28", "2022-01-29", "2022-01-30", "2022-01-31", "2022-02-01", "2022-02-02", "2022-02-04", "2022-02-05", "2022-02-06", "2022-02-07", "2022-02-08", "2022-02-09", "2022-02-10", "2022-02-11", "2022-02-12", "2022-02-13", "2022-02-14", "2022-02-15", "2022-02-16", "2022-02-17", "2022-02-19", "2022-02-20", "2022-02-21", "2022-02-22", "2022-02-23", "2022-02-24", "2022-02-25", "2022-02-27", "2022-03-01", "2022-03-02", "2022-03-03", "2022-03-04", "2022-03-05", "2022-03-06", "2022-03-07", "2022-03-08", "2022-03-09", "2022-03-10", "2022-03-11", "2022-03-12", "2022-03-13", "2022-03-14", "2022-03-15", "2022-03-16", "2022-03-17", "2022-03-18", "2022-03-19", "2022-03-20", "2022-03-21", "2022-03-22", "2022-03-23", "2022-03-24", "2022-03-25", "2022-03-26", "2022-03-28", "2022-03-30", "2022-04-01", "2022-04-02", "2022-04-03", "2022-04-04", "2022-04-05", "2022-04-06", "2022-04-07", "2022-04-08", "2022-04-09", "2022-04-10", "2022-04-11", "2022-04-13", "2022-04-14", "2022-04-15", "2022-04-16", "2022-04-17", "2022-04-18", "2022-04-19", "2022-04-20", "2022-04-21", "2022-04-23", "2022-04-24", "2022-04-25", "2022-04-26", "2022-04-27", "2022-04-28", "2022-04-29", "2022-04-30", "2022-05-01", "2022-05-03", "2022-05-04", "2022-05-05", "2022-05-06", "2022-05-07", "2022-05-08", "2022-05-09", "2022-05-10", "2022-05-11", "2022-05-12", "2022-05-13", "2022-05-14", "2022-05-15", "2022-05-16", "2022-05-17", "2022-05-18", "2022-05-19", "2022-05-20", "2022-05-21", "2022-05-23", "2022-05-24", "2022-05-25", "2022-05-26", "2022-05-27", "2022-05-28", "2022-05-29", "2022-05-30", "2022-05-31", "2022-06-01", "2022-06-02", "2022-06-03", "2022-06-04", "2022-06-05", "2022-06-06", "2022-06-07", "2022-06-09", "2022-06-10", "2022-06-11", "2022-06-12", "2022-06-13", "2022-06-14", "2022-06-15", "2022-06-16", "2022-06-17", "2022-06-18", "2022-06-19", "2022-06-20", "2022-06-21", "2022-06-22", "2022-06-23", "2022-06-24", "2022-06-25", "2022-06-26", "2022-06-27", "2022-06-28", "2022-06-29", "2022-06-30", "2022-07-01", "2022-07-02", "2022-07-03", "2022-07-04", "2022-07-07", "2022-07-08", "2022-07-09", "2022-07-11", "2022-07-12", "2022-07-13", "2022-07-14", "2022-07-15", "2022-07-16", "2022-07-17", "2022-07-19", "2022-07-20", "2022-07-21", "2022-07-23", "2022-07-24", "2022-07-25", "2022-07-26", "2022-07-27", "2022-07-28", "2022-07-29", "2022-07-31", "2022-08-01", "2022-08-04", "2022-08-05", "2022-08-06", "2022-08-07", "2022-08-08", "2022-08-09", "2022-08-10", "2022-08-11", "2022-08-12", "2022-08-13", "2022-08-14", "2022-08-15", "2022-08-16", "2022-08-17", "2022-08-18", "2022-08-19", "2022-08-20", "2022-08-21", "2022-08-22", "2022-08-23", "2022-08-24", "2022-08-25", "2022-08-26", "2022-08-27", "2022-08-28", "2022-08-29", "2022-08-30", "2022-08-31", "2022-09-01", "2022-09-02", "2022-09-03", "2022-09-04", "2022-09-05", "2022-09-06", "2022-09-07", "2022-09-08", "2022-09-09", "2022-09-10", "2022-09-11", "2022-09-12", "2022-09-13", "2022-09-14", "2022-09-15", "2022-09-16", "2022-09-18", "2022-09-19", "2022-09-20", "2022-09-21", "2022-09-22", "2022-09-23", "2022-09-24", "2022-09-25", "2022-09-27", "2022-09-28", "2022-09-29", "2022-09-30", "2022-10-01", "2022-10-02", "2022-10-04", "2022-10-05", "2022-10-06", "2022-10-07", "2022-10-08", "2022-10-09", "2022-10-10", "2022-10-11", "2022-10-12", "2022-10-13", "2022-10-14", "2022-10-15", "2022-10-16", "2022-10-17", "2022-10-18", "2022-10-19", "2022-10-20", "2022-10-21", "2022-10-22", "2022-10-23", "2022-10-25", "2022-10-26", "2022-10-27", "2022-10-28", "2022-10-29", "2022-10-30", "2022-10-31", "2022-11-01", "2022-11-03", "2022-11-04", "2022-11-06", "2022-11-07", "2022-11-08", "2022-11-09", "2022-11-10", "2022-11-11", "2022-11-12", "2022-11-13", "2022-11-14", "2022-11-15", "2022-11-16", "2022-11-17", "2022-11-18", "2022-11-19", "2022-11-20", "2022-11-21", "2022-11-22", "2022-11-23", "2022-11-24", "2022-11-25", "2022-11-28", "2022-11-29", "2022-11-30", "2022-12-01", "2022-12-02", "2022-12-04", "2022-12-05", "2022-12-07", "2022-12-09", "2022-12-10", "2022-12-11", "2022-12-12", "2022-12-13", "2022-12-14"], "ventas": [133131616, 363353040, 766707198, 656434654, 329240160, 200757184, 375202112, 852888030, 452512268, 194818200, 348723672, 179291876, 343574718, 381060954, 122394360, 524788300, 672984896, 39757792, 159568220, 705512252, 380937120, 68279364, 230369364, 291392656, 302574000, 489175306, 173536214, 261367316, 265469696, 445611238, 108896400, 176130176, 396357440, 153745480, 391931452, 163607658, 609611184, 457743782, 375771448, 256325752, 116798206, 273117456, 165498464, 477111912, 170242272, 257191080, 614855368, 45473688, 132771138, 461260798, 890604766, 883701234, 150894652, 530113682, 165072432, 289137200, 7480000, 328405096, 572459198, 257361190, 87627852, 85586910, 634727742, 339529840, 118867424, 301093840, 200466516, 506175352, 101913552, 564633602, 449210656, 59840000, 309301180, 47578800, 424312600, 122346428, 361137322, 894749016, 345884658, 418269616, 460400980, 608729382, 428473400, 161774320, 409232880, 631511102, 228993384, 284955960, 1291733792, 230274716, 492869312, 727222642, 31030962, 381110520, 26180000, 616770876, 592322376, 963282350, 39271736, 337071488, 164564080, 288952210, 49641312, 288985774, 554715612, 306259910, 31030962, 590265536, 482848062, 980010304, 381901928, 323013704, 326326152, 142736400, 766594608, 340162572, 446790930, 141831434, 737774200, 490896516, 515817120, 383966494, 530411728, 452070354, 280727730, 819915090, 555039968, 467492384, 767364026, 878376050, 362507440, 198788960, 258730408, 394586352, 359676988, 423715602, 612650220, 918156686, 826890962, 45646352, 430378128, 144811156, 145866448, 327152064, 396053840, 154922150, 33605944, 48256744, 90947376, 119289930, 249043590, 626950914, 5200000, 210650390, 451863022, 281887550, 354635620, 175160768, 58020000, 292955622, 19031520, 162022636, 155878580, 312381176, 426499578, 67322976, 60018200, 286619528, 201520176, 314043280, 113977300, 180677744, 115087686, 92247288, 185718078, 559566246, 306975344, 328920216, 73250170, 341246826, 427924166, 615425350, 158898624, 103664368, 164020000, 530631984, 145219664, 242350270, 284714352, 85586910, 163322502, 853081868, 39757792, 158680190, 230225286, 169120028, 56842110, 833416522, 27281000, 324096840, 329164224, 175935650, 230949034, 1053477684, 384224936, 335270376, 38063040, 105831974, 377521552, 136421064, 510131098, 175842118, 160540520, 479493008, 50084720, 116095740, 104673360, 56732928, 126022290, 423202348, 108654156, 280144910, 448471948, 322167872, 119273376, 203669532, 107048074, 424604642, 667350454, 289160096, 419824234, 125796952, 517582736, 327443426, 28821618, 221380440, 747545400, 59758650, 108979200, 182661448, 122996384, 362643776, 220473198, 43649600, 118601184, 67076944, 312262032, 268728592, 440373080, 531269512, 264729244, 405626960, 260453520, 59636688, 625694718, 236030648, 169129074, 326191068, 342928104, 121771296, 178910064, 271934582, 312380862, 540707426, 419408826, 363511312, 560349840, 192767470, 56732928, 25204458, 373156224, 57057940, 620223058, 512049152, 138728728, 13279700, 144256464, 117620804, 386053952, 273748176, 22823176, 453881682, 627227236, 602787634, 378145254, 621449490, 409657438, 253758064, 88950888, 433326588, 208442640, 1169856936, 103436540, 149320024, 279048472, 455128674, 699594496, 655593832, 609566422, 59027424, 272474000, 503820898, 364019432, 297079620, 453780592, 151684560, 299782890, 490541642, 771704560, 374519184, 453353080, 325067978, 517894587]}};
+
+const fmtCOP = (n) => {
+  const abs = Math.abs(n);
+  if(abs >= 1e9) return (n/1e9).toFixed(2).replace('.', ',') + ' mil M';
+  if(abs >= 1e6) return (n/1e6).toFixed(1).replace('.', ',') + ' M';
+  if(abs >= 1e3) return (n/1e3).toFixed(0) + ' k';
+  return n.toString();
+};
+const fmtFull = (n) => '$' + Math.round(n).toLocaleString('es-CO');
+const fmtPct = (n) => n.toFixed(1).replace('.', ',') + '%';
+const fmtInt = (n) => Math.round(n).toLocaleString('es-CO');
+
+Chart.defaults.color = '#B7BFCB';
+Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+Chart.defaults.borderColor = 'rgba(255,255,255,0.08)';
+
+const GOLD = '#E7A947', TEAL='#4FD1AE', CORAL='#E8664F', BLUE='#6FA8DC', PAPER='#F3EFE6';
+const palette = [GOLD, TEAL, CORAL, BLUE, '#C08FE8', '#8AA6A3', '#D98E4F', '#7FA6D8', '#E0A5C0'];
+
+/* ---------- Hero KPIs ---------- */
+const heroKpis = [
+  {num: fmtCOP(D.kpis.total_ventas), lab: 'Ventas totales (COP)'},
+  {num: fmtCOP(D.kpis.total_margen), lab: 'Margen bruto (COP)', cls:'teal'},
+  {num: fmtPct(D.kpis.margen_pct), lab: 'Margen bruto %', cls:'teal'},
+  {num: fmtFull(D.kpis.ticket_prom), lab: 'Ticket promedio'},
+  {num: fmtInt(D.kpis.unidades), lab: 'Unidades vendidas'},
+  {num: D.kpis.n_clientes, lab: 'Clientes activos'},
+];
+document.getElementById('hero-kpis').innerHTML = heroKpis.map(k =>
+  `<div class="hero-kpi"><span class="num ${k.cls||''}">${k.num}</span><span class="lab">${k.lab}</span></div>`
+).join('');
+
+/* ---------- 01 Tendencia ---------- */
+const mesesLabel = m => { const [y,mo]=m.split('-'); const nombres=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']; return nombres[parseInt(mo)-1]+' '+y.slice(2); };
+const allMeses = [...D.forecast.meses_hist, ...D.forecast.meses_futuros];
+const ventasFull = [...D.mensual.ventas, ...Array(3).fill(null)];
+const forecastFull = [...Array(D.mensual.ventas.length-1).fill(null), D.mensual.ventas[D.mensual.ventas.length-1], ...D.forecast.ventas_forecast];
+const costoFull = [...D.mensual.costo, ...Array(3).fill(null)];
+const margenFull = [...D.mensual.margen, ...Array(3).fill(null)];
+
+new Chart(document.getElementById('chartTendencia'), {
+  type:'line',
+  data:{
+    labels: allMeses.map(mesesLabel),
+    datasets:[
+      {label:'Ventas', data: ventasFull, borderColor: GOLD, backgroundColor:'transparent', tension:0.3, pointRadius:3},
+      {label:'Costo', data: costoFull, borderColor: CORAL, backgroundColor:'transparent', tension:0.3, pointRadius:3},
+      {label:'Margen bruto', data: margenFull, borderColor: TEAL, backgroundColor:'transparent', tension:0.3, pointRadius:3},
+      {label:'Proyección ventas', data: forecastFull, borderColor: GOLD, borderDash:[5,4], backgroundColor:'transparent', pointRadius:3, tension:0.2},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom', labels:{boxWidth:10, padding:16}}},
+    scales:{ y:{ ticks:{ callback:(v)=>fmtCOP(v) } } }
+  }
+});
+
+new Chart(document.getElementById('chartMargenPct'), {
+  type:'bar',
+  data:{
+    labels: D.mensual.meses.map(mesesLabel),
+    datasets:[{label:'Margen %', data: D.mensual.margen_pct, backgroundColor: TEAL, borderRadius:2}]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{ y:{ ticks:{ callback:(v)=>v+'%' } } }
+  }
+});
+
+document.getElementById('forecast-stats').innerHTML = `
+  <div class="stat-row"><span>Tendencia mensual de ventas</span><span class="v ${D.forecast.pendiente_mensual<0?'coral':'teal'}">${fmtCOP(D.forecast.pendiente_mensual)} / mes</span></div>
+  <div class="stat-row"><span>Ajuste del modelo (R²)</span><span class="v">${D.forecast.r2}</span></div>
+  <div class="stat-row"><span>Ventas proyectadas ene 2023</span><span class="v">${fmtCOP(D.forecast.ventas_forecast[0])}</span></div>
+  <div class="stat-row"><span>Ventas proyectadas mar 2023</span><span class="v">${fmtCOP(D.forecast.ventas_forecast[2])}</span></div>
+`;
+
+/* ---------- 02 Mix producto ---------- */
+new Chart(document.getElementById('chartMarca'), {
+  type:'bar',
+  data:{
+    labels: D.marca.map(d=>d.Marca),
+    datasets:[
+      {label:'Participación en ventas (%)', data: D.marca.map(d=>d.Part), backgroundColor: GOLD, borderRadius:2, yAxisID:'y'},
+      {label:'Margen bruto (%)', data: D.marca.map(d=>d.MargenPct), backgroundColor: TEAL, borderRadius:2, yAxisID:'y'}
+    ]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom', labels:{boxWidth:10}}},
+    scales:{ x:{ ticks:{ callback:(v)=>v+'%' } } }
+  }
+});
+
+new Chart(document.getElementById('chartTipo'), {
+  type:'doughnut',
+  data:{
+    labels: D.tipo.map(d=>d.Tipo),
+    datasets:[{data: D.tipo.map(d=>d.Part), backgroundColor:[GOLD,TEAL,CORAL], borderColor: '#161E29', borderWidth:2}]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'}, tooltip:{callbacks:{label:(ctx)=>` ${ctx.label}: ${ctx.raw}%`}}}
+  }
+});
+
+const n80 = D.n80, nTot = D.n_productos_total;
+document.getElementById('pareto-sub').textContent = `${n80} de ${nTot} productos explican el 80% de las ventas`;
+new Chart(document.getElementById('chartPareto'), {
+  data:{
+    labels: D.producto.map(d=>d.Producto),
+    datasets:[
+      {type:'bar', label:'Ventas (%)', data: D.producto.map(d=>d.Part), backgroundColor: GOLD, borderRadius:2, order:2},
+      {type:'line', label:'Acumulado (%)', data: D.producto.map(d=>d.Acum), borderColor: CORAL, backgroundColor:'transparent', yAxisID:'y1', tension:0.15, pointRadius:2, order:1}
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom', labels:{boxWidth:10}}},
+    scales:{
+      x:{ ticks:{ maxRotation:60, minRotation:60, font:{size:9} } },
+      y:{ ticks:{ callback:(v)=>v+'%' } },
+      y1:{ position:'right', min:0, max:100, ticks:{ callback:(v)=>v+'%' }, grid:{drawOnChartArea:false} }
+    }
+  }
+});
+
+const marginRows = (title, list, cls) => `
+  <h3 style="margin-top:${title==='Menor margen'?'0':'18px'}">${title}</h3>
+  <table class="data-table"><tbody>
+  ${list.map(d=>`<tr><td>${d.Producto}</td><td class="num v ${cls}">${fmtPct(d.MargenPct)}</td></tr>`).join('')}
+  </tbody></table>`;
+document.getElementById('margin-table').innerHTML =
+  marginRows('Menor margen', D.low_margin, 'coral') +
+  marginRows('Mayor margen', D.high_margin, 'teal');
+
+/* ---------- 03 Clientes ---------- */
+new Chart(document.getElementById('chartCliente'), {
+  type:'bar',
+  data:{
+    labels: D.cliente.map(d=>d.Cliente),
+    datasets:[{label:'Participación en ventas (%)', data: D.cliente.map(d=>d.Part), backgroundColor: palette, borderRadius:2}]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{ x:{ ticks:{ callback:(v)=>v+'%' } } }
+  }
+});
+
+document.getElementById('hhi-stats').innerHTML = `
+  <div class="stat-row"><span>HHI (0–10.000)</span><span class="v coral">${D.hhi}</span></div>
+  <div class="stat-row"><span>Cliente más grande</span><span class="v">${fmtPct(D.top1_share)} de las ventas</span></div>
+  <div class="stat-row"><span>Clientes totales</span><span class="v">${D.kpis.n_clientes}</span></div>
+  <div class="stat-row"><span>Lectura</span><span class="v" style="font-weight:400; color:var(--paper-dim); font-size:0.85rem;">Por encima de 2.500 se considera un mercado altamente concentrado</span></div>
+`;
+document.getElementById('callout-top1').textContent = `${D.cliente[0].Cliente} concentra el ${fmtPct(D.cliente[0].Part)} de las ventas anuales.`;
+
+/* ---------- 04 Comercial ---------- */
+new Chart(document.getElementById('chartArea'), {
+  type:'bar',
+  data:{
+    labels: D.area.map(d=>d.Area),
+    datasets:[{label:'Ventas (COP)', data: D.area.map(d=>d.Ventas), backgroundColor: GOLD, borderRadius:2}]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}, tooltip:{callbacks:{label:(ctx)=>fmtFull(ctx.raw)}}},
+    scales:{ x:{ ticks:{ callback:(v)=>fmtCOP(v) } } }
+  }
+});
+
+new Chart(document.getElementById('chartPago'), {
+  type:'doughnut',
+  data:{
+    labels: D.pago.map(d=>d['Pago del cliente']),
+    datasets:[{data: D.pago.map(d=>d.Part), backgroundColor:[TEAL, CORAL], borderColor:'#161E29', borderWidth:2}]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'}, tooltip:{callbacks:{label:(ctx)=>` ${ctx.label}: ${ctx.raw}%`}}}
+  }
+});
+const credito = D.pago.find(d=>d['Pago del cliente'].toLowerCase().includes('cr'));
+document.getElementById('pago-stats').innerHTML = `
+  <div class="stat-row"><span>Ventas a crédito</span><span class="v coral">${fmtPct(credito.Part)}</span></div>
+  <div class="stat-row"><span>Lectura</span><span class="v" style="font-weight:400; color:var(--paper-dim); font-size:0.85rem;">Más de 4 de cada 5 pesos vendidos dependen de cobro posterior</span></div>
+`;
+
+/* ---------- 05 Ratios ---------- */
+const rotacion = D.kpis.unidades / D.kpis.n_ventas;
+const costoVentaRatio = D.kpis.total_costo / D.kpis.total_ventas * 100;
+const ventasPorEmpleado = D.kpis.total_ventas / D.kpis.n_empleados;
+const ratios = [
+  {t:'Margen bruto', v: fmtPct(D.kpis.margen_pct), d:'Margen / Ventas — utilidad que deja cada peso vendido antes de gastos operativos.'},
+  {t:'Ratio costo / venta', v: fmtPct(costoVentaRatio), d:'Peso del costo de mercancía sobre cada peso facturado.'},
+  {t:'Ticket promedio', v: fmtFull(D.kpis.ticket_prom), d:'Valor promedio de cada movimiento de venta registrado.'},
+  {t:'Unidades por venta', v: rotacion.toFixed(1), d:'Unidades promedio despachadas en cada transacción.'},
+  {t:'Ventas a crédito', v: fmtPct(credito.Part), d:'Participación de ventas que dependen de cobro posterior (riesgo de cartera).'},
+  {t:'Concentración top-1 (HHI)', v: fmtPct(D.top1_share) + ' · ' + D.hhi, d:'Participación del cliente más grande, e índice HHI de concentración de cartera.'},
+  {t:'Ventas por empleado', v: fmtCOP(ventasPorEmpleado), d:'Ventas totales divididas entre empleados registrados en el periodo.'},
+  {t:'Productos que explican el 80%', v: `${n80} de ${nTot}`, d:'Tamaño real del catálogo que mueve el negocio (regla de Pareto).'},
+  {t:'Crecimiento mensual estimado', v: fmtCOP(D.forecast.pendiente_mensual)+'/mes', d:'Pendiente de la tendencia lineal de ventas mensuales, con R² de ' + D.forecast.r2 + '.'},
+];
+document.getElementById('ratios-grid').innerHTML = ratios.map(r => `
+  <div class="panel">
+    <h3 style="font-family:var(--font-display); font-size:1.4rem; color:var(--gold); margin-bottom:8px;">${r.v}</h3>
+    <div style="font-weight:600; margin-bottom:4px;">${r.t}</div>
+    <p class="sub" style="margin:0;">${r.d}</p>
+  </div>
+`).join('');
+
+/* ---------- 06 Hallazgos ---------- */
+const findings = [
+  {t:'Cuatro variables, un solo cliente', d:'Ciudad y transportadora coinciden exactamente con cada uno de los 4 clientes, y el segmento (A/B/C) lo hace en 1.900 de 1.901 filas (Distribuidora Oriente aparece una vez como "A" en lugar de "C", posible error de tipeo). En la práctica, estas variables no aportan información adicional entre sí: identifican al mismo cliente de varias formas.'},
+  {t:'Posible producto duplicado', d:'"Celular Donalis" lleva la palabra "Celular" en el nombre, pero está clasificado como tipo "Portátil" (marca Lenovo) y su precio y costo unitario son idénticos, peso por peso, a los del "Lenovo 14IGL7". Todo apunta a una entrada duplicada o a un nombre mal digitado en el sistema de origen, y conviene confirmarlo antes de tomar decisiones de inventario sobre este producto.'},
+  {t:'Textos sin estandarizar', d:'Se normalizaron variaciones de escritura como "crédito" / "Crédito", espacios sobrantes en el segmento de cliente ("A "), y la marca "Samsum" se corrigió a "Samsung" para que los totales por marca no se dividieran de forma artificial.'},
+  {t:'Precio fijo todo el año', d:'Cada producto mantiene el mismo precio y costo unitario en los 12 meses del periodo — no hay ajustes por inflación ni promociones registradas, lo que simplifica el pronóstico pero también sugiere que la lista de precios no se ha actualizado en el año.'},
+  {t:'Un año calendario completo, sin datos previos', d:'La base cubre exactamente enero–diciembre 2022, por lo que el pronóstico de 2023 se apoya solo en una tendencia lineal de 12 puntos; conviene revisarlo tan pronto se sumen los primeros meses reales de 2023.'},
+];
+document.getElementById('findings-list').innerHTML = findings.map(f => `<li><b>${f.t}</b>${f.d}</li>`).join('');
+</script>
+</body>
+</html>
